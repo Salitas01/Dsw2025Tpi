@@ -1,5 +1,7 @@
 ﻿using Dsw2025Tpi.Domain.Entities;
 using Dsw2025Tpi.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Protocols;
 using System.Linq.Expressions;
 
 namespace Dsw2025Tpi.Data.Repositories;
@@ -7,11 +9,28 @@ namespace Dsw2025Tpi.Data.Repositories;
 public class EfRepository: IRepository
 {
     private readonly Dsw2025TpiContext _context;
+    //private List<Product> _products;
 
     public EfRepository(Dsw2025TpiContext context)
     {
         _context = context;
     }
+
+    /*
+    public EfRepository()
+    {
+        // This constructor is intentionally left empty for dependency injection purposes.
+    }
+
+    private void LoadProducts()
+    {
+        var json = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Sources\\Products.json");
+        _products = System.Text.Json.JsonSerializer.Deserialize<List<Product>>(json, new System.Text.Json.JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+        }) ?? new List<Product>();
+    }*/
 
     public async Task<T> Add<T>(T entity) where T : EntityBase
     {
