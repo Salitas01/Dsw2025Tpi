@@ -20,10 +20,6 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> Create([FromBody] OrderModel.CreateRequest request)
     {
         var id = await _service.CreateAsync(request);
-        return CreatedAtAction(nameof(GetByIdPlaceholder), new { id }, new { id });
+        return Ok(new { Id = id });
     }
-
-    // Solo evita que CreatedAtAction rompa y se reemplaza SOLO cuando se tenga el GetById real implementado
-    [HttpGet("{id:guid}")]
-    public IActionResult GetByIdPlaceholder(Guid id) => Ok(new { id });
 }

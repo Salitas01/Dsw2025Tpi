@@ -25,7 +25,7 @@ public class ProductsController : ControllerBase
          return CreatedAtAction(nameof(_service.GetById), new { id }, new { id });
     }
 
-    // Fix for CS1003 and CS1513 errors in the GetProducts method
+    //EndPoint #2 - Obtener productos
     [HttpGet]
     [Route("api/products")]
     public IActionResult GetProducts()
@@ -45,9 +45,13 @@ public class ProductsController : ControllerBase
     {
         var product = await _service.GetById(id);
         if (product == null)
+        {
             throw new NotFoundException("Producto no encontrado.");
+        }
+        else
+        {
             return Ok(product);
-
+        }
     }
 
     //EndPoint #4 - Actualizar un producto por ID
