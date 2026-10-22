@@ -1,0 +1,77 @@
+# Ubicación en el repo: .github/workflows/deploy.yml
+name: Build and Deploy to Azure App Service
+
+on:
+  push:
+    branches: [development, main]
+  pull_request:
+    branches: [development, main]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ics-backend                                  # nombre del repo que crearon en Docker Hub
+  PROJECT_PATH: Dsw2025Tpi.Api/Dsw2025Tpi.Api.csproj       # ajustar si su proyecto se llama distinto
+
+jobs:
+  # ---------------- CI: restaurar, compilar y testear ----------------
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Obtener el código
+        uses: actions/checkout@v4
+
+      - name: 2. Instalar .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 3. Restaurar paquetes NuGet
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: 4. Compilación limpia (Release)
+        run: |
+          dotnet clean ${{ env.PROJECT_PATH }} -c Release
+          dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
+
+      # Descomentar si tienen un proyecto de tests
+      # - name: 5. Ejecutar tests
+      #   run: dotnet test --no-build -c Release
+
+  # ---------------- CD: imagen Docker + despliegue ----------------
+  docker-and-deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Obtener el código
+        uses: actions/checkout@v4
+
+      - name: 2. Iniciar sesión en Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 3. Construir la imagen Docker
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest \
+            -f Dockerfile \
+            .
+
+      - name: 4. Subir la imagen a Docker Hub
+        if: github.event_name != 'pull_request'
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+
+      # ---- PENDIENTE: descomentar cuando tengan el App Service creado en Azure ----
+      # - name: 5. Desplegar en Azure App Service
+      #   if: github.event_name != 'pull_request'
+      #   uses: azure/webapps-deploy@v3
+      #   with:
+      #     app-name: ${{ secrets.APP_SERVICE_NAME }}
+      #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+      #     # Se despliega por SHA (no "latest") para que Azure siempre tome la versión nueva
+      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
