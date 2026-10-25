@@ -1,4 +1,3 @@
-# Ubicación en el repo: .github/workflows/deploy.yml
 name: Build and Deploy to Azure App Service
 
 on:
@@ -10,7 +9,7 @@ on:
 
 env:
   IMAGE_NAME: ics-backend                                  # nombre del repo que crearon en Docker Hub
-  PROJECT_PATH: Dsw2025Tpi.Api/Dsw2025Tpi.Api.csproj       # ajustar si su proyecto se llama distinto
+  PROJECT_PATH: Dsw2025Tpi.Api/Dsw2025Tpi.Api.csproj       
 
 jobs:
   # ---------------- CI: restaurar, compilar y testear ----------------
@@ -67,11 +66,11 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
 
       # ---- App Service creado en Azure ----
-      # - name: 5. Desplegar en Azure App Service
-      #   if: github.event_name != 'pull_request'
-      #   uses: azure/webapps-deploy@v3
-      #   with:
-      #     app-name: ${{ secrets.APP_SERVICE_NAME }}
-      #     publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-      #     # Se despliega por SHA (no "latest") para que Azure siempre tome la versión nueva
-      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+       - name: 5. Desplegar en Azure App Service
+         if: github.event_name != 'pull_request'
+         uses: azure/webapps-deploy@v3
+         with:
+           app-name: ${{ secrets.APP_SERVICE_NAME }}
+           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+           # Se despliega por SHA (no "latest") para que Azure siempre tome la versión nueva
+           images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
