@@ -130,7 +130,7 @@ public class Program
                 policy =>
                 {
                     policy
-                        .WithOrigins("http://localhost:5173") // Frontend
+                        .WithOrigins("http://localhost:5173", "https://dsw2025-unidad5-mtjd8qvbh-salas11.vercel.app") // Frontend
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
