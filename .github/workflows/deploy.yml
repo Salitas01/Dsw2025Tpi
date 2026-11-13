@@ -13,7 +13,7 @@ env:
 
 jobs:
   # ---------------- CI: restaurar, compilar y testear ----------------
-  build:
+  build-and-tests:
     runs-on: ubuntu-latest
     steps:
       - name: 1. Obtener el código
@@ -33,12 +33,12 @@ jobs:
           dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
 
       # Descomentar si tienen un proyecto de tests
-      # - name: 5. Ejecutar tests
-      #   run: dotnet test --no-build -c Release
+      - name: 5. Ejecutar tests
+        run: dotnet test --no-restore --verbosity normal
 
   # ---------------- CD: imagen Docker + despliegue ----------------
   docker-and-deploy:
-    needs: build
+    needs: build-and-tests
     runs-on: ubuntu-latest
     steps:
       - name: 1. Obtener el código
