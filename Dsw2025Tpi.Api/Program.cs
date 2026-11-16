@@ -37,10 +37,9 @@ public class Program
             }
         });
 
-        builder.Services.AddControllers().AddJsonOptions(opt =>
+        builder.Services.AddControllers().AddJsonOptions(options =>
         {
-            opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); // Esto solo lo agregregamos para que no se muestren los numeros de los enum si no que se muestra la palabra.
-
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
