@@ -89,21 +89,40 @@ namespace Dsw2025Tpi.Application.Services
             );
         }
 
-        public async Task<IEnumerable<ProductModel.Response>?> GetProducts()
+        public async Task<ProductModel.ResponsePagination?> GetProducts(ProductModel.FilterProduct request)
         {
             _logger.LogInformation("Obteniendo todos los productos activos.");
 
-            return (await _repository
-                .GetFiltered<Product>(p => p.IsActive))?
+            var activeProducts = await _repository.GetFiltered<Product>(
+                p => p.IsActive &&
+                     (string.IsNullOrEmpty(request.SearchTerm) || p.Name.Contains(request.SearchTerm))
+            );
+
+            // Si no hay productos, devolvemos el objeto paginado vacío
+            if (activeProducts == null || !activeProducts.Any())
+            {
+                return new ProductModel.ResponsePagination(new List<ProductModel.Response>(), 0);
+            }
+
+            int validPageNumber = request.PageNumber ?? 1;
+            int validPageSize = request.PageSize ?? 10;
+
+            var products = activeProducts
+                .OrderBy(p => p.Sku)
+                .Skip((validPageNumber - 1) * validPageSize)
+                .Take(validPageSize)
                 .Select(p => new ProductModel.Response(
-                p.Id,
-                p.Sku,
-                p.InternalCode,
-                p.Name,
-                p.Description,
-                p.CurrentUnitPrice,
-                p.StockQuantity,
-                p.IsActive));
+                    p.Id,
+                    p.Sku,
+                    p.InternalCode,
+                    p.Name,
+                    p.Description,
+                    p.CurrentUnitPrice,
+                    p.StockQuantity,
+                    p.IsActive));
+
+            // Retornamos la estructura que el Frontend espera: (Lista de items, Total de items)
+            return new ProductModel.ResponsePagination(products.ToList(), activeProducts.Count());
         }
 
         public async Task<ProductModel.ResponsePagination?> GetAuthProducts(ProductModel.FilterProduct request)

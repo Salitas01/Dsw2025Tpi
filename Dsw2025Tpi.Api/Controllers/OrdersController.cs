@@ -20,14 +20,22 @@ public class OrdersController : ControllerBase
         _logger = logger;
     }
 
-    
+
     [HttpPost]
     public async Task<IActionResult> CreateOrder([FromBody] OrderRequest request)
     {
         _logger.LogInformation("Recibida solicitud POST /api/orders para crear una nueva orden.");
-        var created = await _service.CreateOrder(request);
-        return CreatedAtAction(nameof(GetOrderById), new { id = created.OrderId }, created);
 
+        var created = await _service.CreateOrder(request);
+
+        var jsonResponse = System.Text.Json.JsonSerializer.Serialize(created);
+
+        return new ContentResult
+        {
+            StatusCode = 201,
+            Content = jsonResponse,
+            ContentType = "application/json"
+        };
     }
 
 
