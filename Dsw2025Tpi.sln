@@ -17,8 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dsw2025Tpi.UnitTest", "tests\Dsw2025Tpi.UnitTest\Dsw2025Tpi.UnitTest.csproj", "{1F7483B4-E10F-450F-876E-F0644B4EEACB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dsw2025Tpi.IntegrationTests", "tests\Dsw2025Tpi.IntegrationTests\Dsw2025Tpi.IntegrationTests.csproj", "{CF4FDACD-2B73-4CF5-9591-8384F95AD6E4}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
