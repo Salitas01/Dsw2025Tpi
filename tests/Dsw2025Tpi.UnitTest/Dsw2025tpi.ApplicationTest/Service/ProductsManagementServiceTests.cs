@@ -130,14 +130,17 @@ namespace Dsw2025Tpi.UnitTest.Application.Services
                     });
 
             // 2. ACT
-            // Llamamos a GetProducts, que es el endpoint público
-            var resultado = await service.GetProducts();
+            var emptyFilter = new ProductModel.FilterProduct(Status: null, SearchTerm: null, PageNumber: null, PageSize: null);
+
+            var resultado = await service.GetProducts(emptyFilter);
 
             // 3. ASSERT
             Assert.NotNull(resultado);
-            var listaResultado = resultado.ToList();
-            Assert.Equal(2, listaResultado.Count); // Solo deben quedar 2
-            Assert.DoesNotContain(listaResultado, p => p.IsActive == false); // Ninguno debe ser inactivo
+
+            var listaResultado = resultado.Items.ToList();
+
+            Assert.Equal(2, listaResultado.Count); 
+            Assert.DoesNotContain(listaResultado, p => p.IsActive == false); 
         }
 
         // Escenario 2: Paginación matemática
