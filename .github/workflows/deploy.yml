@@ -13,7 +13,7 @@ env:
 
 jobs:
   # ---------------- CI: restaurar, compilar y testear ----------------
-  build:
+  build-and-tests:
     runs-on: ubuntu-latest
     steps:
       - name: 1. Obtener el código
@@ -24,21 +24,20 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: 3. Restaurar paquetes NuGet
-        run: dotnet restore ${{ env.PROJECT_PATH }}
+      - name: 3. Restaurar paquetes NuGet de la solución
+        run: dotnet restore Dsw2025Tpi.sln
 
       - name: 4. Compilación limpia (Release)
         run: |
-          dotnet clean ${{ env.PROJECT_PATH }} -c Release
-          dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
+          dotnet clean Dsw2025Tpi.sln -c Release
+          dotnet build Dsw2025Tpi.sln -c Release --no-restore
 
-      # Descomentar si tienen un proyecto de tests
-      # - name: 5. Ejecutar tests
-      #   run: dotnet test --no-build -c Release
+      - name: 5. Ejecutar todos los tests
+        run: dotnet test Dsw2025Tpi.sln --no-restore --verbosity normal
 
   # ---------------- CD: imagen Docker + despliegue ----------------
   docker-and-deploy:
-    needs: build
+    needs: build-and-tests
     runs-on: ubuntu-latest
     steps:
       - name: 1. Obtener el código
