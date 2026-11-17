@@ -116,7 +116,10 @@ namespace Dsw2025Tpi.Application.Services
             _logger.LogInformation("Consulta de Productos");
             var activeProducts = await _repository.GetFiltered<Product>(
                 p => (isActive == null || p.IsActive == isActive) &&
-                     (string.IsNullOrEmpty(request.SearchTerm) || p.Name.Contains(request.SearchTerm))
+                    (string.IsNullOrEmpty(request.SearchTerm) ||
+                     p.Name.ToLower().Contains(request.SearchTerm.ToLower()) ||
+                     p.Sku.ToLower().Contains(request.SearchTerm.ToLower()) ||
+                     p.InternalCode.ToLower().Contains(request.SearchTerm.ToLower()))
             );
 
             if (activeProducts == null || !activeProducts.Any())
