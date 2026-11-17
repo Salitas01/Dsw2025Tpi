@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dsw2025Tpi.Application", "D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dsw2025Tpi.IntegrationTests", "tests\Dsw2025tpi.IntegrationTests\Dsw2025Tpi.IntegrationTests.csproj", "{E90B1D4A-A05B-4893-BD27-E794C595EE2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dsw2025Tpi.IntegrationTests", "tests\Dsw2025Tpi.IntegrationTests\Dsw2025Tpi.IntegrationTests.csproj", "{E90B1D4A-A05B-4893-BD27-E794C595EE2A}"
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dsw2025Tpi.UnitTest", "tests\Dsw2025Tpi.UnitTest\Dsw2025Tpi.UnitTest.csproj", "{1F7483B4-E10F-450F-876E-F0644B4EEACB}"
 EndProject
 Global
