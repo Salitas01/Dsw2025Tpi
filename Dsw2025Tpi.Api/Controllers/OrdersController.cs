@@ -28,14 +28,7 @@ public class OrdersController : ControllerBase
 
         var created = await _service.CreateOrder(request);
 
-        var jsonResponse = System.Text.Json.JsonSerializer.Serialize(created);
-
-        return new ContentResult
-        {
-            StatusCode = 201,
-            Content = jsonResponse,
-            ContentType = "application/json"
-        };
+        return CreatedAtAction(nameof(GetOrderById), new { id = created.OrderId }, created);
     }
 
 
