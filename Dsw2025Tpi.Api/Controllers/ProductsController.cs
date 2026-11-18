@@ -24,16 +24,6 @@ public class ProductsController : ControllerBase
         _logger = logger;
     }
 
-
-    //[AllowAnonymous]
-    //[HttpGet()]
-    //public async Task<IActionResult> GetProducts()
-    //{
-    //    _logger.LogInformation("Recibida solicitud GET /api/products para obtener todos los productos.");
-    //    var products = await _service.GetProducts();
-    //    return Ok(products);
-    //}
-
     [AllowAnonymous]
     [HttpGet()]
     public async Task<IActionResult> GetProducts([FromQuery] ProductModel.FilterProduct request)
@@ -44,36 +34,11 @@ public class ProductsController : ControllerBase
 
         if (products == null)
         {
+            Response.Headers.Append("X-Error-Message", "There are no active products");
             return NoContent();
         }
-
-        var options = new System.Text.Json.JsonSerializerOptions
-        {
-            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
-        };
-
-        var jsonResponse = System.Text.Json.JsonSerializer.Serialize(products, options);
-
-        return new ContentResult
-        {
-            StatusCode = 200,
-            Content = jsonResponse,
-            ContentType = "application/json"
-        };
+        return Ok(products);
     }
-
-    // [HttpGet("admin")]
-    // [Authorize(Roles = "Admin")]
-    //public async Task<IActionResult> GetAuthProducts([FromQuery] ProductModel.FilterProduct request)
-    //{
-    //    var products = await _service.GetAuthProducts(request);
-    //    if (products == null)
-    //    {
-    //        Response.Headers.Append("X-Error-Message", "There are no active products");
-    //        return NoContent();
-    //    }
-    //    return Ok(products);
-    //}
 
     [HttpGet("admin")]
     [Authorize(Roles = "Admin")]
@@ -82,22 +47,10 @@ public class ProductsController : ControllerBase
         var products = await _service.GetAuthProducts(request);
         if (products == null)
         {
+            Response.Headers.Append("X-Error-Message", "There are no active products");
             return NoContent();
         }
-
-        var options = new System.Text.Json.JsonSerializerOptions
-        {
-            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
-        };
-
-        var jsonResponse = System.Text.Json.JsonSerializer.Serialize(products, options);
-
-        return new ContentResult
-        {
-            StatusCode = 200,
-            Content = jsonResponse,
-            ContentType = "application/json"
-        };
+        return Ok(products);
     }
 
 
@@ -109,15 +62,6 @@ public class ProductsController : ControllerBase
         var product = await _service.GetProductById(id);
         return Ok(product);
     }
-
-    //[Authorize(Roles = "Admin")]
-    //[HttpPost()]
-    //public async Task<IActionResult> AddProduct([FromBody] ProductModel.Request request)
-    //{
-    //    _logger.LogInformation("Recibida solicitud POST /api/products para agregar un nuevo producto.");
-    //    var created = await _service.AddProduct(request);
-    //    return CreatedAtAction(nameof(GetProductById), new { id = created.Id }, created);
-    //}
 
     [Authorize(Roles = "Admin")]
     [HttpPost()]
@@ -133,14 +77,9 @@ public class ProductsController : ControllerBase
             sku = created.Sku
         };
 
-        var jsonResponse = System.Text.Json.JsonSerializer.Serialize(respuestaMinima);
+        return CreatedAtAction(nameof(GetProductById), new { id = created.Id }, respuestaMinima);
 
-        return new ContentResult
-        {
-            StatusCode = 201,
-            Content = jsonResponse,
-            ContentType = "application/json"
-        };
+
     }
 
     [Authorize(Roles = "Admin")]
